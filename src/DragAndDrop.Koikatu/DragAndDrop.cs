@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace KeelPlugins
+namespace DragAndDrop
 {
     [BepInPlugin(GUID, PluginName, Version)]
     public class DragAndDrop : DragAndDropCore

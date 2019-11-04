@@ -5,7 +5,7 @@ using System;
 using System.Linq;
 using UnityEngine;
 
-namespace KeelPlugins
+namespace DragAndDrop
 {
     internal class MakerHandler : CardHandlerMethods
     {

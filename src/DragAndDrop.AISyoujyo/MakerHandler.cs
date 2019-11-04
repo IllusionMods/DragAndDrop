@@ -3,7 +3,7 @@ using HarmonyLib;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace KeelPlugins
+namespace DragAndDrop
 {
     internal class MakerHandler : CardHandlerMethods
     {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace KeelPlugins
+namespace DragAndDrop
 {
     public sealed class BoyerMoore
     {

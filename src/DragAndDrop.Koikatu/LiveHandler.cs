@@ -1,7 +1,7 @@
 ﻿using Manager;
 using System.Linq;
 
-namespace KeelPlugins
+namespace DragAndDrop
 {
     internal class LiveHandler : CardHandlerMethods
     {

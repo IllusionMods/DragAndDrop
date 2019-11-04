@@ -1,7 +1,7 @@
 ﻿using HarmonyLib;
 using UnityEngine;
 
-namespace KeelPlugins
+namespace DragAndDrop
 {
     internal class FreeHSelectHandler : CardHandlerMethods
     {

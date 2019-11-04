@@ -2,7 +2,7 @@
 using BepInEx.Logging;
 using System.Collections.Generic;
 
-namespace KeelPlugins
+namespace DragAndDrop
 {
     public abstract class DragAndDropCore : BaseUnityPlugin
     {

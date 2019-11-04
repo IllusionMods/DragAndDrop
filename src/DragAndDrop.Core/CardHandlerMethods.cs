@@ -1,4 +1,4 @@
-﻿namespace KeelPlugins
+﻿namespace DragAndDrop
 {
     internal abstract class CardHandlerMethods : CardHandlerCore<CardHandlerMethods>
     {

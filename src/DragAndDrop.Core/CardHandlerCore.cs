@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace KeelPlugins
+namespace DragAndDrop
 {
     internal abstract class CardHandlerCore<T> where T : CardHandlerCore<T>
     {
