@@ -1,5 +1,5 @@
 # DragAndDrop
-Drag cards, scenes and outfits to the game window to load them.
+Drag cards, scenes and outfits to the game window to load them.  
 Currently there is a version for AIGirl and Koikatu.
 
 ## How to install
