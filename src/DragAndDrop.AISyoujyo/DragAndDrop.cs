@@ -9,11 +9,14 @@ namespace DragAndDrop
     [BepInPlugin(GUID, PluginName, Version)]
     public class DragAndDrop : DragAndDropCore
     {
-        public const string Version = "1.0.0";
+        public const string Version = "1.1.0";
 
         private static readonly byte[] CharaToken = Encoding.UTF8.GetBytes("【AIS_Chara】");
         private static readonly byte[] SexToken = Encoding.UTF8.GetBytes("sex");
-
+        private static readonly byte[] StudioToken = Encoding.UTF8.GetBytes("KStudio");
+        private static readonly byte[] CoordinateToken = Encoding.UTF8.GetBytes("AIS_Clothes");
+        private static readonly byte[] PoseToken = Encoding.UTF8.GetBytes("【pose】");
+        
         internal override void OnFiles(List<string> aFiles, POINT aPos)
         {
             var goodFiles = aFiles.Where(x =>
@@ -35,11 +38,23 @@ namespace DragAndDrop
                 {
                     var bytes = File.ReadAllBytes(file);
 
-                    if(BoyerMoore.ContainsSequence(bytes, CharaToken))
+                    if(BoyerMoore.ContainsSequence(bytes, StudioToken))
+                    {
+                        cardHandler.Scene_Load(file, aPos);
+                    }
+                    else if(BoyerMoore.ContainsSequence(bytes, CharaToken))
                     {
                         var index = new BoyerMoore(SexToken).Search(bytes).First();
                         var sex = bytes[index + SexToken.Length];
                         cardHandler.Character_Load(file, aPos, sex);
+                    }
+                    else if(BoyerMoore.ContainsSequence(bytes, CoordinateToken))
+                    {
+                        cardHandler.Coordinate_Load(file, aPos);
+                    }
+                    else if(BoyerMoore.ContainsSequence(bytes, PoseToken))
+                    {
+                        cardHandler.PoseData_Load(file, aPos);
                     }
                     else
                     {
