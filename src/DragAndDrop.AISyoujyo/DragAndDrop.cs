@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Manager;
 
 namespace DragAndDrop
 {
@@ -35,13 +36,19 @@ namespace DragAndDrop
             var cardHandler = CardHandlerMethods.GetActiveCardHandler();
             if(cardHandler != null)
             {
+                bool inStudio = Scene.Instance && Scene.Instance.NowSceneNames.Any(x => x == "Studio");
+                bool inHousing = Scene.Instance && Scene.Instance.NowSceneNames.Any(x => x == "Map") && FindObjectsOfType<Housing.UICtrl>().Any(i => i.IsInit);
+                
                 foreach(var file in goodFiles)
                 {
                     var bytes = File.ReadAllBytes(file);
 
                     if(BoyerMoore.ContainsSequence(bytes, StudioToken))
                     {
-                        cardHandler.Scene_Load(file, aPos);
+                        if(!inStudio)
+                            Logger.LogMessage("Can't load studio scene file in current scene");
+                        else
+                            cardHandler.Scene_Load(file, aPos);
                     }
                     else if(BoyerMoore.ContainsSequence(bytes, CharaToken))
                     {
@@ -59,7 +66,10 @@ namespace DragAndDrop
                     }
                     else if(BoyerMoore.ContainsSequence(bytes, HouseToken))
                     {
-                        cardHandler.HouseData_Load(file, Logger);
+                        if(!inHousing)
+                            Logger.LogMessage("Can't load housing file in current scene");
+                        else
+                            cardHandler.HouseData_Load(file, Logger);
                     }
                     else
                     {
