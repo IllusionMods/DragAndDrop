@@ -11,25 +11,22 @@ namespace DragAndDrop
 
         public override void Character_Load(string path, POINT pos, byte sex)
         {
-            var customCharaWindow = GameObject.FindObjectOfType<CustomCharaWindow>();
-            var traverse = Traverse.Create(customCharaWindow);
+            var cvsCharaLoad = GameObject.FindObjectOfType<CvsO_CharaLoad>();
+            var traverse = Traverse.Create(cvsCharaLoad);
+            var charaLoadWin = traverse.Field("charaLoadWin");
+            var tglLoadOption = charaLoadWin.Field("tglLoadOption").GetValue<Toggle[]>();
+            int num = 0;
 
-            if(customCharaWindow)
+            if(tglLoadOption != null)
             {
-                int num = 0;
-                var tglLoadOption = traverse.Field("tglLoadOption").GetValue<Toggle[]>();
-
-                if(tglLoadOption != null)
-                {
-                    if(tglLoadOption[0].isOn) num |= 1;
-                    if(tglLoadOption[1].isOn) num |= 2;
-                    if(tglLoadOption[2].isOn) num |= 4;
-                    if(tglLoadOption[3].isOn) num |= 8;
-                    if(tglLoadOption[4].isOn) num |= 16;
-                }
-                
-                customCharaWindow.onClick03?.Invoke(new CustomCharaFileInfo { FullPath = path }, num);
+                if(tglLoadOption[0].isOn) num |= 1;
+                if(tglLoadOption[1].isOn) num |= 2;
+                if(tglLoadOption[2].isOn) num |= 4;
+                if(tglLoadOption[3].isOn) num |= 8;
+                if(tglLoadOption[4].isOn) num |= 16;
             }
+
+            charaLoadWin.GetValue<CustomCharaWindow>().onClick03.Invoke(new CustomCharaFileInfo { FullPath = path }, num);
         }
     }
 }
