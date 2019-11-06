@@ -16,6 +16,7 @@ namespace DragAndDrop
         private static readonly byte[] StudioToken = Encoding.UTF8.GetBytes("KStudio");
         private static readonly byte[] CoordinateToken = Encoding.UTF8.GetBytes("AIS_Clothes");
         private static readonly byte[] PoseToken = Encoding.UTF8.GetBytes("【pose】");
+        private static readonly byte[] HouseToken = Encoding.UTF8.GetBytes("【AIS_Housing】");
         
         internal override void OnFiles(List<string> aFiles, POINT aPos)
         {
@@ -52,9 +53,13 @@ namespace DragAndDrop
                     {
                         cardHandler.Coordinate_Load(file, aPos);
                     }
-                    else if(BoyerMoore.ContainsSequence(bytes, PoseToken))
+                    else if (BoyerMoore.ContainsSequence(bytes, PoseToken))
                     {
                         cardHandler.PoseData_Load(file, aPos);
+                    }
+                    else if(BoyerMoore.ContainsSequence(bytes, HouseToken))
+                    {
+                        cardHandler.HouseData_Load(file, Logger);
                     }
                     else
                     {

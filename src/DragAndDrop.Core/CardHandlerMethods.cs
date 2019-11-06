@@ -7,5 +7,6 @@
         public virtual void Character_Load(string path, POINT pos, byte sex) { }
         public virtual void Coordinate_Load(string path, POINT pos) { }
         public virtual void PoseData_Load(string path, POINT pos) { }
+        public virtual void HouseData_Load(string path, BepInEx.Logging.ManualLogSource Logger) { }
     }
 }
