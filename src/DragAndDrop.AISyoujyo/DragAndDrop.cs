@@ -14,7 +14,8 @@ namespace DragAndDrop
 
         private static readonly byte[] CharaToken = Encoding.UTF8.GetBytes("【AIS_Chara】");
         private static readonly byte[] SexToken = Encoding.UTF8.GetBytes("sex");
-        private static readonly byte[] StudioToken = Encoding.UTF8.GetBytes("KStudio");
+        private static readonly byte[] StudioOldToken = Encoding.UTF8.GetBytes("KStudio"); // Compatibility with older scenes created before the 11-08 update
+        private static readonly byte[] StudioNewToken = Encoding.UTF8.GetBytes("StudioNEOV2");
         private static readonly byte[] CoordinateToken = Encoding.UTF8.GetBytes("AIS_Clothes");
         private static readonly byte[] PoseToken = Encoding.UTF8.GetBytes("【pose】");
         private static readonly byte[] HouseToken = Encoding.UTF8.GetBytes("【AIS_Housing】");
@@ -43,7 +44,7 @@ namespace DragAndDrop
                 {
                     var bytes = File.ReadAllBytes(file);
 
-                    if(BoyerMoore.ContainsSequence(bytes, StudioToken))
+                    if(BoyerMoore.ContainsSequence(bytes, StudioOldToken) || BoyerMoore.ContainsSequence(bytes, StudioNewToken))
                     {
                         if(!inStudio)
                             Logger.LogMessage("Can't load studio scene file in current scene");
