@@ -10,7 +10,7 @@ namespace DragAndDrop
     [BepInPlugin(GUID, PluginName, Version)]
     public class DragAndDrop : DragAndDropCore
     {
-        public const string Version = "1.1.0";
+        public const string Version = "1.1.1";
 
         private static readonly byte[] CharaToken = Encoding.UTF8.GetBytes("【AIS_Chara】");
         private static readonly byte[] SexToken = Encoding.UTF8.GetBytes("sex");
