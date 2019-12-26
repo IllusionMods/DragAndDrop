@@ -28,5 +28,13 @@ namespace DragAndDrop
 
             charaLoadWin.GetValue<CustomCharaWindow>().onClick03.Invoke(new CustomCharaFileInfo { FullPath = path }, num);
         }
+
+        public override void Coordinate_Load(string path, POINT pos)
+        {
+            var cvsClothesLoad = GameObject.FindObjectOfType<CvsC_ClothesLoad>();
+            var traverse = Traverse.Create(cvsClothesLoad);
+            var clothesLoadWin = traverse.Field("clothesLoadWin");
+            clothesLoadWin.GetValue<CustomClothesWindow>().onClick03.Invoke(new CustomClothesFileInfo { FullPath = path });
+        }
     }
 }
