@@ -2,12 +2,13 @@ using Housing;
 using System.Linq;
 using BepInEx.Logging;
 using UnityEngine;
+using Manager;
 
 namespace DragAndDrop
 {
     internal class HousingHandler : CardHandlerMethods
     {
-        public override bool Condition => Singleton<Manager.Scene>.Instance.NowSceneNames.Any(sceneName => sceneName == "Map") && Object.FindObjectsOfType<UICtrl>().Any(i => i.IsInit);
+        public override bool Condition => Singleton<Scene>.Instance.NowSceneNames.Any(sceneName => sceneName == "Map") && Object.FindObjectsOfType<UICtrl>().Any(i => i.IsInit);
         
         public override void HouseData_Load(string path, ManualLogSource Logger)
         {

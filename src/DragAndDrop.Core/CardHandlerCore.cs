@@ -13,12 +13,15 @@ namespace DragAndDrop
         /// </summary>
         public abstract bool Condition { get; }
 
-        public static T GetActiveCardHandler()
+        public static bool GetActiveCardHandler(out T cardHandler)
         {
             foreach(var handler in cardHandlers.Values)
             {
                 if(handler.Condition)
-                    return handler;
+                {
+                    cardHandler = handler;
+                    return true;
+                }
             }
 
             var mainType = typeof(T);
@@ -33,10 +36,14 @@ namespace DragAndDrop
                 }
 
                 if(handler.Condition)
-                    return handler;
+                {
+                    cardHandler = handler;
+                    return true;
+                }
             }
 
-            return null;
+            cardHandler = null;
+            return false;
         }
     }
 }

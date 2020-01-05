@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using Manager;
 
 namespace DragAndDrop
 {
@@ -32,22 +31,15 @@ namespace DragAndDrop
                 return;
             }
 
-            var cardHandler = CardHandlerMethods.GetActiveCardHandler();
-            if(cardHandler != null)
+            if(CardHandlerMethods.GetActiveCardHandler(out var cardHandler))
             {
-                bool inStudio = Scene.Instance && Scene.Instance.NowSceneNames.Any(x => x == "Studio");
-                bool inHousing = Scene.Instance && Scene.Instance.NowSceneNames.Any(x => x == "Map") && FindObjectsOfType<Housing.UICtrl>().Any(i => i.IsInit);
-                
                 foreach(var file in goodFiles)
                 {
                     var bytes = File.ReadAllBytes(file);
 
-                    if(BoyerMoore.ContainsSequence(bytes, StudioOldToken) || BoyerMoore.ContainsSequence(bytes, StudioNewToken))
+                    if(BoyerMoore.ContainsSequence(bytes, StudioNewToken) || BoyerMoore.ContainsSequence(bytes, StudioOldToken))
                     {
-                        if(!inStudio)
-                            Logger.LogMessage("Can't load studio scene file in current scene");
-                        else
-                            cardHandler.Scene_Load(file, aPos);
+                        cardHandler.Scene_Load(file, aPos);
                     }
                     else if(BoyerMoore.ContainsSequence(bytes, CharaToken))
                     {
@@ -65,10 +57,7 @@ namespace DragAndDrop
                     }
                     else if(BoyerMoore.ContainsSequence(bytes, HouseToken))
                     {
-                        if(!inHousing)
-                            Logger.LogMessage("Can't load housing file in current scene");
-                        else
-                            cardHandler.HouseData_Load(file, Logger);
+                        cardHandler.HouseData_Load(file, Logger);
                     }
                     else
                     {
