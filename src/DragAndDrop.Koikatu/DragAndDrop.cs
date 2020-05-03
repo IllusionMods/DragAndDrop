@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using UnityEngine;
 
 namespace DragAndDrop
 {
@@ -37,7 +38,10 @@ namespace DragAndDrop
 
                     if(BoyerMoore.ContainsSequence(bytes, StudioToken))
                     {
-                        cardHandler.Scene_Load(file, aPos);
+                        if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
+                            cardHandler.Scene_Import(file, aPos);
+                        else
+                            cardHandler.Scene_Load(file, aPos);
                     }
                     else if(BoyerMoore.ContainsSequence(bytes, CharaToken))
                     {
