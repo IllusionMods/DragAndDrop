@@ -15,7 +15,29 @@ namespace DragAndDrop
 
         public override void Scene_Load(string path, POINT pos)
         {
-            Studio.Studio.Instance.LoadScene(path);
+            Singleton<Studio.Studio>.Instance.colorPaletteCtrl.visible = false;
+
+            Studio.CheckScene.unityActionYes = () =>
+            {
+                Singleton<Studio.Scene>.Instance.UnLoad();
+                Studio.Studio.Instance.LoadScene(path);
+            };
+            Studio.CheckScene.unityActionNo = () =>
+            {
+                Singleton<Studio.Scene>.Instance.UnLoad();
+            };
+            // Need to use the scene reset sprite because the scene load sprite isn't loaded unless the scene load window is opened
+            Studio.CheckScene.sprite = Traverse.Create(Studio.Studio.Instance.systemButtonCtrl).Field<Sprite>("spriteInit").Value;
+
+            Singleton<Studio.Scene>.Instance.Load(new Studio.Scene.Data
+            {
+                sceneName = "StudioCheck",
+                isLoading = false,
+                isAsync = false,
+                isFade = false,
+                isOverlap = true,
+                isAdd = true
+            });
         }
 
         public override void Scene_Import(string path, POINT pos)
