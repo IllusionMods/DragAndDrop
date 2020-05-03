@@ -38,7 +38,7 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="Assembly-CSharp, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\IllusionLibs.AIGirl.Assembly-CSharp.2019.11.8\lib\net46\Assembly-CSharp.dll</HintPath>
+      <HintPath>..\..\packages\IllusionLibs.AIGirl.Assembly-CSharp.2019.12.20\lib\net46\Assembly-CSharp.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="BepInEx, Version=5.0.0.0, Culture=neutral, processorArchitecture=MSIL">
