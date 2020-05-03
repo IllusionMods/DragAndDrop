@@ -1,6 +1,7 @@
 ﻿using BepInEx;
 using BepInEx.Logging;
 using System.Collections.Generic;
+using BepInEx.Configuration;
 
 namespace DragAndDrop
 {
@@ -12,10 +13,13 @@ namespace DragAndDrop
         internal static new ManualLogSource Logger;
 
         private UnityDragAndDropHook hook;
+        internal static ConfigEntry<bool> ShowSceneOverwriteWarnings;
 
         private void Awake()
         {
             Logger = base.Logger;
+
+            ShowSceneOverwriteWarnings = Config.Bind("General", "Show scene overwrite warnings", true, "Show a confirmation dialog box when loading the dropped scene would result in losing data in the currently loaded scene.");
         }
 
         private void OnEnable()

@@ -15,29 +15,39 @@ namespace DragAndDrop
 
         public override void Scene_Load(string path, POINT pos)
         {
-            Singleton<Studio.Studio>.Instance.colorPaletteCtrl.visible = false;
+            var studio = Studio.Studio.Instance;
 
-            Studio.CheckScene.unityActionYes = () =>
-            {
-                Singleton<Studio.Scene>.Instance.UnLoad();
-                Studio.Studio.Instance.LoadScene(path);
-            };
-            Studio.CheckScene.unityActionNo = () =>
-            {
-                Singleton<Studio.Scene>.Instance.UnLoad();
-            };
-            // Need to use the scene reset sprite because the scene load sprite isn't loaded unless the scene load window is opened
-            Studio.CheckScene.sprite = Traverse.Create(Studio.Studio.Instance.systemButtonCtrl).Field<Sprite>("spriteInit").Value;
+            studio.colorPaletteCtrl.visible = false;
 
-            Singleton<Studio.Scene>.Instance.Load(new Studio.Scene.Data
+            var empty = Singleton<Studio.Scene>.Instance.commonSpace.transform.childCount == 0;
+            if (empty || !DragAndDropCore.ShowSceneOverwriteWarnings.Value)
             {
-                sceneName = "StudioCheck",
-                isLoading = false,
-                isAsync = false,
-                isFade = false,
-                isOverlap = true,
-                isAdd = true
-            });
+                studio.LoadScene(path);
+            }
+            else
+            {
+                Studio.CheckScene.unityActionYes = () =>
+                {
+                    Singleton<Studio.Scene>.Instance.UnLoad();
+                    studio.LoadScene(path);
+                };
+                Studio.CheckScene.unityActionNo = () =>
+                {
+                    Singleton<Studio.Scene>.Instance.UnLoad();
+                };
+                // Need to use the scene reset sprite because the scene load sprite isn't loaded unless the scene load window is opened
+                Studio.CheckScene.sprite = Traverse.Create(studio.systemButtonCtrl).Field<Sprite>("spriteInit").Value;
+
+                Singleton<Studio.Scene>.Instance.Load(new Studio.Scene.Data
+                {
+                    sceneName = "StudioCheck",
+                    isLoading = false,
+                    isAsync = false,
+                    isFade = false,
+                    isOverlap = true,
+                    isAdd = true
+                });
+            }
         }
 
         public override void Scene_Import(string path, POINT pos)

@@ -15,8 +15,7 @@ namespace DragAndDrop
         public override void HouseData_Load(string path, ManualLogSource Logger)
         {
             var craftInfo = CraftInfo.LoadStatic(path);
-            var craftScene = Singleton<CraftScene>.Instance;
-            var housingID = craftScene.HousingID;
+            var housingID = Singleton<CraftScene>.Instance.HousingID;
 
             if (Singleton<Manager.Housing>.Instance.dicAreaInfo.TryGetValue(housingID, out var areaInfo))
             {
@@ -24,21 +23,17 @@ namespace DragAndDrop
                 {
                     if (areaSizeInfo.compatibility.Contains(Singleton<Manager.Housing>.Instance.GetSizeType(craftInfo.AreaNo)))
                     {
-                        ConfirmScene.Sentence = "データを読込みますか？\n" + "セットされたアイテムは削除されます。".Coloring("#DE4529FF").Size(24);
-                        ConfirmScene.OnClickedYes = () =>
+                        if (!DragAndDropCore.ShowSceneOverwriteWarnings.Value)
                         {
-                            Singleton<Selection>.Instance.SetSelectObjects(null);
-                            craftScene.UICtrl.ListUICtrl.ClearList();
-                            Singleton<UndoRedoManager>.Instance.Clear();
-                            craftScene.WorkingUICtrl.Visible = true;
-                            Singleton<Manager.Housing>.Instance.LoadAsync(path, obj =>
-                            {
-                                craftScene.UICtrl.ListUICtrl.UpdateUI();
-                                craftScene.WorkingUICtrl.Visible = false;
-                            });
-                        };
-                        ConfirmScene.OnClickedNo = () => { };
-                        Singleton<Game>.Instance.LoadDialog();
+                            LoadHouseData(path);
+                        }
+                        else
+                        {
+                            ConfirmScene.Sentence = "データを読込みますか？\n" + "セットされたアイテムは削除されます。".Coloring("#DE4529FF").Size(24);
+                            ConfirmScene.OnClickedYes = () => { LoadHouseData(path); };
+                            ConfirmScene.OnClickedNo = () => { };
+                            Singleton<Game>.Instance.LoadDialog();
+                        }
                     }
                     else
                     {
@@ -46,6 +41,20 @@ namespace DragAndDrop
                     }
                 }
             }
+        }
+
+        private static void LoadHouseData(string path)
+        {
+            var craftScene = Singleton<CraftScene>.Instance;
+            Singleton<Selection>.Instance.SetSelectObjects(null);
+            craftScene.UICtrl.ListUICtrl.ClearList();
+            Singleton<UndoRedoManager>.Instance.Clear();
+            craftScene.WorkingUICtrl.Visible = true;
+            Singleton<Manager.Housing>.Instance.LoadAsync(path, obj =>
+            {
+                craftScene.UICtrl.ListUICtrl.UpdateUI();
+                craftScene.WorkingUICtrl.Visible = false;
+            });
         }
     }
 }

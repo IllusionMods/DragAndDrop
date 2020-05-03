@@ -14,27 +14,36 @@ namespace DragAndDrop
 
         public override void Scene_Load(string path, POINT pos)
         {
-            Singleton<Studio.Studio>.Instance.colorPalette.visible = false;
+            var studio = Studio.Studio.Instance;
 
-            Studio.CheckScene.unityActionYes = () =>
-            {
-                Singleton<Scene>.Instance.UnLoad();
-                var studio = Studio.Studio.Instance;
-                // Wait for a frame for the dialog to unload before loading the scene (not necessary?)
-                studio.StartCoroutine(new[] { null, studio.LoadSceneCoroutine(path) }.GetEnumerator());
-            };
-            Studio.CheckScene.unityActionNo = () =>
-            {
-                Singleton<Scene>.Instance.UnLoad();
-            };
-            // Need to use the scene reset sprite because the scene load sprite isn't loaded unless the scene load window is opened
-            Studio.CheckScene.sprite = Traverse.Create(Studio.Studio.Instance.systemButtonCtrl).Field<Sprite>("spriteInit").Value;
+            studio.colorPalette.visible = false;
 
-            Singleton<Scene>.Instance.LoadReserve(new Scene.Data
+            var empty = Singleton<Scene>.Instance.commonSpace.transform.childCount == 0;
+            if (empty || !DragAndDropCore.ShowSceneOverwriteWarnings.Value)
             {
-                levelName = "StudioCheck",
-                isAdd = true
-            }, false);
+                studio.StartCoroutine(studio.LoadSceneCoroutine(path));
+            }
+            else
+            {
+                Studio.CheckScene.unityActionYes = () =>
+                {
+                    Singleton<Scene>.Instance.UnLoad();
+                    // Wait for a frame for the dialog to unload before loading the scene (not necessary?)
+                    studio.StartCoroutine(new[] { null, studio.LoadSceneCoroutine(path) }.GetEnumerator());
+                };
+                Studio.CheckScene.unityActionNo = () =>
+                {
+                    Singleton<Scene>.Instance.UnLoad();
+                };
+                // Need to use the scene reset sprite because the scene load sprite isn't loaded unless the scene load window is opened
+                Studio.CheckScene.sprite = Traverse.Create(studio.systemButtonCtrl).Field<Sprite>("spriteInit").Value;
+
+                Singleton<Scene>.Instance.LoadReserve(new Scene.Data
+                {
+                    levelName = "StudioCheck",
+                    isAdd = true
+                }, false);
+            }
         }
 
         public override void Scene_Import(string path, POINT pos)
