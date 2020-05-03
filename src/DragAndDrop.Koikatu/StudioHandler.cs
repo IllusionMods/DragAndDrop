@@ -1,5 +1,4 @@
-﻿using BepInEx.Logging;
-using HarmonyLib;
+﻿using HarmonyLib;
 using Manager;
 using Studio;
 using System;
@@ -15,8 +14,24 @@ namespace DragAndDrop
 
         public override void Scene_Load(string path, POINT pos)
         {
-            var studio = Studio.Studio.Instance;
-            studio.StartCoroutine(studio.LoadSceneCoroutine(path));
+            Studio.CheckScene.unityActionYes =() =>
+            {
+                Singleton<Scene>.Instance.UnLoad();
+                var studio = Studio.Studio.Instance;
+                // Wait for a frame for the dialog to unload before loading the scene (not necessary?)
+                studio.StartCoroutine(new[] { null, studio.LoadSceneCoroutine(path) }.GetEnumerator());
+            };
+            Studio.CheckScene.unityActionNo =() =>
+            {
+                Singleton<Scene>.Instance.UnLoad();
+            };
+            // Need to use the scene reset sprite because the scene load sprite isn't loaded unless the scene load window is opened
+            Studio.CheckScene.sprite = Traverse.Create(Studio.Studio.Instance.systemButtonCtrl).Field<Sprite>("spriteInit").Value;
+            Singleton<Scene>.Instance.LoadReserve(new Scene.Data
+            {
+                levelName = "StudioCheck",
+                isAdd = true
+            }, false);
         }
 
         public override void Scene_Import(string path, POINT pos)
