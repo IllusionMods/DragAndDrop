@@ -1,4 +1,4 @@
-using Housing;
+ï»¿using Housing;
 using System.Linq;
 using AIProject.Scene;
 using BepInEx.Logging;
@@ -24,7 +24,7 @@ namespace DragAndDrop
                 {
                     if (areaSizeInfo.compatibility.Contains(Singleton<Manager.Housing>.Instance.GetSizeType(craftInfo.AreaNo)))
                     {
-                        ConfirmScene.Sentence = "¥Ç©`¥¿¤òÕiÞz¤ß¤Þ¤¹¤«£¿\n" + "¥»¥Ã¥È¤µ¤ì¤¿¥¢¥¤¥Æ¥à¤ÏÏ÷³ý¤µ¤ì¤Þ¤¹¡£".Coloring("#DE4529FF").Size(24);
+                        ConfirmScene.Sentence = "ãƒ‡ãƒ¼ã‚¿ã‚’èª­è¾¼ã¿ã¾ã™ã‹ï¼Ÿ\n" + "ã‚»ãƒƒãƒˆã•ã‚ŒãŸã‚¢ã‚¤ãƒ†ãƒ ã¯å‰Šé™¤ã•ã‚Œã¾ã™ã€‚".Coloring("#DE4529FF").Size(24);
                         ConfirmScene.OnClickedYes = () =>
                         {
                             Singleton<Selection>.Instance.SetSelectObjects(null);
