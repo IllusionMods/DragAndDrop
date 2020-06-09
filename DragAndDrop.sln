@@ -11,8 +11,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DragAndDrop.Koikatu", "src\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DragAndDrop.PlayHome", "src\DragAndDrop.PlayHome\DragAndDrop.PlayHome.csproj", "{ED70DD11-1A24-4DB2-9AB0-025433AFD495}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DragAndDrop.HoneySelect2", "src\DragAndDrop.HoneySelect2\DragAndDrop.HoneySelect2.csproj", "{8B98F2D9-CE3B-4872-A418-BA0BB6204BE2}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		src\DragAndDrop.Core\DragAndDrop.Core.projitems*{8b98f2d9-ce3b-4872-a418-ba0bb6204be2}*SharedItemsImports = 4
 		src\DragAndDrop.Core\DragAndDrop.Core.projitems*{c1d7de50-a471-425d-a28d-9f360417a991}*SharedItemsImports = 13
 		src\DragAndDrop.Core\DragAndDrop.Core.projitems*{dac82a17-7fe0-478e-932d-4ef293a31a32}*SharedItemsImports = 4
 		src\DragAndDrop.Core\DragAndDrop.Core.projitems*{de5f203a-f19c-4a8d-954e-bf1bca15cced}*SharedItemsImports = 4
@@ -35,6 +38,10 @@ Global
 		{ED70DD11-1A24-4DB2-9AB0-025433AFD495}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ED70DD11-1A24-4DB2-9AB0-025433AFD495}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ED70DD11-1A24-4DB2-9AB0-025433AFD495}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8B98F2D9-CE3B-4872-A418-BA0BB6204BE2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8B98F2D9-CE3B-4872-A418-BA0BB6204BE2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8B98F2D9-CE3B-4872-A418-BA0BB6204BE2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8B98F2D9-CE3B-4872-A418-BA0BB6204BE2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
