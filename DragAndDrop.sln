@@ -13,10 +13,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DragAndDrop.PlayHome", "src
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DragAndDrop.HoneySelect2", "src\DragAndDrop.HoneySelect2\DragAndDrop.HoneySelect2.csproj", "{8B98F2D9-CE3B-4872-A418-BA0BB6204BE2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DragAndDrop.EmotionCreators", "src\DragAndDrop.EmotionCreators\DragAndDrop.EmotionCreators.csproj", "{CF5D5CED-ADC9-49DA-8AC6-DBB9989CEA7E}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		src\DragAndDrop.Core\DragAndDrop.Core.projitems*{8b98f2d9-ce3b-4872-a418-ba0bb6204be2}*SharedItemsImports = 4
 		src\DragAndDrop.Core\DragAndDrop.Core.projitems*{c1d7de50-a471-425d-a28d-9f360417a991}*SharedItemsImports = 13
+		src\DragAndDrop.Core\DragAndDrop.Core.projitems*{cf5d5ced-adc9-49da-8ac6-dbb9989cea7e}*SharedItemsImports = 4
 		src\DragAndDrop.Core\DragAndDrop.Core.projitems*{dac82a17-7fe0-478e-932d-4ef293a31a32}*SharedItemsImports = 4
 		src\DragAndDrop.Core\DragAndDrop.Core.projitems*{de5f203a-f19c-4a8d-954e-bf1bca15cced}*SharedItemsImports = 4
 		src\DragAndDrop.Core\DragAndDrop.Core.projitems*{ed70dd11-1a24-4db2-9ab0-025433afd495}*SharedItemsImports = 4
@@ -42,6 +45,10 @@ Global
 		{8B98F2D9-CE3B-4872-A418-BA0BB6204BE2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8B98F2D9-CE3B-4872-A418-BA0BB6204BE2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8B98F2D9-CE3B-4872-A418-BA0BB6204BE2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CF5D5CED-ADC9-49DA-8AC6-DBB9989CEA7E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CF5D5CED-ADC9-49DA-8AC6-DBB9989CEA7E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CF5D5CED-ADC9-49DA-8AC6-DBB9989CEA7E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CF5D5CED-ADC9-49DA-8AC6-DBB9989CEA7E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
