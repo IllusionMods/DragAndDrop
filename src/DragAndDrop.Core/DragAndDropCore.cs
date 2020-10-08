@@ -22,17 +22,23 @@ namespace DragAndDrop
             ShowSceneOverwriteWarnings = Config.Bind("General", "Show scene overwrite warnings", true, "Show a confirmation dialog box when loading the dropped scene would result in losing data in the currently loaded scene.");
         }
 
+#if DEBUG
         private void OnEnable()
+#else
+        private void Start() // Run in start instead of onenable to avoid the hook timing out and failing in rare cases
+#endif
         {
             hook = new UnityDragAndDropHook();
             hook.InstallHook();
             hook.OnDroppedFiles += (aFiles, aPos) => ThreadingHelper.Instance.StartSyncInvoke(() => OnFiles(aFiles, aPos));
         }
 
+#if DEBUG
         private void OnDisable()
         {
             hook.UninstallHook();
         }
+#endif
 
         internal abstract void OnFiles(List<string> aFiles, POINT aPos);
     }
