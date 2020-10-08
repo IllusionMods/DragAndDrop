@@ -1,57 +1,24 @@
-$array = @("DragAndDrop.AISyoujyo", "DragAndDrop.HoneySelect2", "DragAndDrop.Koikatu", "DragAndDrop.PlayHome")
+$dir = $PSScriptRoot + "/bin/"
+$copy = $dir + "/copy/BepInEx"
 
-if ($PSScriptRoot -match '.+?\\bin\\?') {
-    $dir = $PSScriptRoot + "\"
-}
-else {
-    $dir = $PSScriptRoot + "\bin\"
-}
+Remove-Item -Force -Path ($dir + "/copy") -Recurse -ErrorAction SilentlyContinue
+Remove-Item -Force -Path ($dir + "/out") -Recurse -ErrorAction SilentlyContinue
+New-Item -ItemType Directory -Force -Path ($copy + "/plugins")
+New-Item -ItemType Directory -Force -Path ($dir + "/out")
 
-$out = $dir + "BepInEx\plugins\" 
-New-Item -ItemType Directory -Force -Path $out
-New-Item -ItemType Directory -Force -Path ($dir + "out\")
-
-# Fix using wrong slashes in zip files
-Add-Type -AssemblyName System.Text.Encoding
-Add-Type -AssemblyName System.IO.Compression.FileSystem
-class FixedEncoder : System.Text.UTF8Encoding {
-    FixedEncoder() : base($true) { }
-
-    [byte[]] GetBytes([string] $s)
-    {
-        $s = $s.Replace("\\", "/");
-        return ([System.Text.UTF8Encoding]$this).GetBytes($s);
-    }
-}
-
-function CreateZip ($element)
+foreach ($filepath in [System.IO.Directory]::EnumerateFiles($dir,"*.dll"))
 {
-    Remove-Item -Force -Path ($out + "*")
-    New-Item -ItemType Directory -Force -Path $out
+	$filename = $filepath.Replace($dir, "")
 
-    Copy-Item -Path ($dir + $element + ".dll") -Destination $out
-    Copy-Item -Path ($dir + $element + ".xml") -Destination $out -ErrorAction Ignore
+	Remove-Item -Force -Path ($copy) -Recurse
+	New-Item -ItemType Directory -Force -Path ($copy + "/plugins/")
+	Copy-Item -Path ($filepath) -Destination ($copy + "/plugins/") -Force
 
-    $ver = [System.Diagnostics.FileVersionInfo]::GetVersionInfo($dir + $element + ".dll").FileVersion.ToString()
+	$version = "v" + (Get-ChildItem -Path ($filepath) -Filter "*.dll" -Force)[0].VersionInfo.FileVersion.ToString()
+	$zipfilename = $filename.Replace(".dll", " " + $version + ".zip")
 
-    $zipName = $dir + "out\" + $element + "_" + $ver + ".zip";
-    Remove-Item -Force -Path $zipName -ErrorAction Ignore
-    [System.IO.Compression.ZipFile]::CreateFromDirectory($dir + "BepInEx", $zipName, [System.IO.Compression.CompressionLevel]::Optimal, $true, [FixedEncoder]::new())
+	"Creating archive: " + $zipfilename
+	Compress-Archive -Path $copy -Force -CompressionLevel "Optimal" -DestinationPath ($dir + "out/" + $zipfilename)
 }
 
-foreach ($element in $array) 
-{
-    try
-    {
-        CreateZip ($element)
-    }
-    catch 
-    {
-        # retry
-        CreateZip ($element)
-    }
-}
-
-Remove-Item -Force -Path ($out + "*")
-Remove-Item -Force -Path ($dir + "BepInEx") -Recurse
-
+Remove-Item -Force -Path ($dir + "/copy") -Recurse
