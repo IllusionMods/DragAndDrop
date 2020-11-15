@@ -9,7 +9,7 @@ namespace DragAndDrop
     {
         public const string PluginName = "Drag & Drop";
         public const string GUID = "keelhauled.draganddrop";
-        public const string Version = "1.2.2";
+        public const string Version = "1.2.3";
         internal static new ManualLogSource Logger;
 
         private UnityDragAndDropHook hook;
