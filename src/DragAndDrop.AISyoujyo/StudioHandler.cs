@@ -36,7 +36,7 @@ namespace DragAndDrop
                     Singleton<Scene>.Instance.UnLoad();
                 };
                 // Need to use the scene reset sprite because the scene load sprite isn't loaded unless the scene load window is opened
-                Studio.CheckScene.sprite = Traverse.Create(studio.systemButtonCtrl).Field<Sprite>("spriteInit").Value;
+                Studio.CheckScene.sprite = studio.systemButtonCtrl.spriteInit;
 
                 Singleton<Scene>.Instance.LoadReserve(new Scene.Data
                 {
@@ -113,7 +113,7 @@ namespace DragAndDrop
             var mpCharCtrl = GameObject.FindObjectOfType<MPCharCtrl>();
             if(mpCharCtrl)
             {
-                int select = Traverse.Create(mpCharCtrl).Field("select").GetValue<int>();
+                int select = mpCharCtrl.select;
                 if(select == 0) mpCharCtrl.OnClickRoot(0);
             }
         }

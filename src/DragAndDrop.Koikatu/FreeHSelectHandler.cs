@@ -79,20 +79,20 @@ namespace DragAndDrop
             if(chaFileControl.LoadCharaFile(path, 255, false, true))
             {
                 var hscene = GameObject.FindObjectOfType<FreeHScene>();
-                var member = Traverse.Create(hscene).Field("member");
+                var member = hscene.member;
 
                 switch(type)
                 {
                     case ResultType.Heroine:
-                        member.Field("resultHeroine").Property("Value").SetValue(new SaveData.Heroine(chaFileControl, false));
+                        member.resultHeroine.Value = new SaveData.Heroine(chaFileControl, false);
                         break;
 
                     case ResultType.Player:
-                        member.Field("resultPlayer").Property("Value").SetValue(new SaveData.Player(chaFileControl, false));
+                        member.resultPlayer.Value = new SaveData.Player(chaFileControl, false);
                         break;
 
                     case ResultType.Partner:
-                        member.Field("resultPartner").Property("Value").SetValue(new SaveData.Heroine(chaFileControl, false));
+                        member.resultPartner.Value = new SaveData.Heroine(chaFileControl, false);
                         break;
                 }
             }

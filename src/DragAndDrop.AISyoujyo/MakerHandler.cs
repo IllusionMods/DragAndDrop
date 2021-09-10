@@ -1,7 +1,5 @@
 ﻿using CharaCustom;
-using HarmonyLib;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace DragAndDrop
 {
@@ -12,9 +10,7 @@ namespace DragAndDrop
         public override void Character_Load(string path, POINT pos, byte sex)
         {
             var cvsCharaLoad = GameObject.FindObjectOfType<CvsO_CharaLoad>();
-            var traverse = Traverse.Create(cvsCharaLoad);
-            var charaLoadWin = traverse.Field("charaLoadWin");
-            var tglLoadOption = charaLoadWin.Field("tglLoadOption").GetValue<Toggle[]>();
+            var tglLoadOption = cvsCharaLoad.charaLoadWin.tglLoadOption;
             int num = 0;
 
             if(tglLoadOption != null)
@@ -26,15 +22,13 @@ namespace DragAndDrop
                 if(tglLoadOption[4].isOn) num |= 16;
             }
 
-            charaLoadWin.GetValue<CustomCharaWindow>().onClick03.Invoke(new CustomCharaFileInfo { FullPath = path }, num);
+            cvsCharaLoad.charaLoadWin.onClick03.Invoke(new CustomCharaFileInfo { FullPath = path }, num);
         }
 
         public override void Coordinate_Load(string path, POINT pos)
         {
             var cvsClothesLoad = GameObject.FindObjectOfType<CvsC_ClothesLoad>();
-            var traverse = Traverse.Create(cvsClothesLoad);
-            var clothesLoadWin = traverse.Field("clothesLoadWin");
-            clothesLoadWin.GetValue<CustomClothesWindow>().onClick03.Invoke(new CustomClothesFileInfo { FullPath = path });
+            cvsClothesLoad.clothesLoadWin.onClick03.Invoke(new CustomClothesFileInfo { FullPath = path });
         }
     }
 }
