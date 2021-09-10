@@ -68,5 +68,17 @@ namespace DragAndDrop
                 Logger.LogMessage("No handler found for this scene");
             }
         }
+
+        public static bool LoadOrImportCharaFile(string path, ChaFileControl chaFileControl)
+        {
+            if (chaFileControl.LoadCharaFile(path, 255, false, true)) return true;
+            if (chaFileControl.LoadCharaFileKoikatsu(path, 255, false, true))
+            {
+                Logger.LogMessage("Attempting to import a Koikatu card");
+                return true;
+            }
+
+            return false;
+        }
     }
 }

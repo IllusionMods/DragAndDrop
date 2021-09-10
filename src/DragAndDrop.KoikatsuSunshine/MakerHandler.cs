@@ -32,9 +32,18 @@ namespace DragAndDrop
             var chaCtrl = CustomBase.Instance.chaCtrl;
             var originalSex = chaCtrl.sex;
 
-            chaCtrl.chaFile.LoadFileLimited(path, chaCtrl.sex, loadFace, loadBody, loadHair, parameter, loadCoord);
-            if(chaCtrl.chaFile.GetLastErrorCode() != 0)
-                throw new Exception("LoadFileLimited failed");
+            if (loadFace && loadBody && loadHair && parameter && loadCoord)
+            {
+                DragAndDrop.LoadOrImportCharaFile(path, chaCtrl.chaFile);
+                if (chaCtrl.chaFile.GetLastErrorCode() != 0)
+                    throw new Exception("LoadOrImportCharaFile failed");
+            }
+            else
+            {
+                chaCtrl.chaFile.LoadFileLimited(path, chaCtrl.sex, loadFace, loadBody, loadHair, parameter, loadCoord);
+                if (chaCtrl.chaFile.GetLastErrorCode() != 0)
+                    throw new Exception("LoadFileLimited failed");
+            }
 
             if(chaCtrl.chaFile.parameter.sex != originalSex)
             {

@@ -76,7 +76,7 @@ namespace DragAndDrop
         private void SetupCharacter(string path, ResultType type)
         {
             var chaFileControl = new ChaFileControl();
-            if(chaFileControl.LoadCharaFile(path, 255, false, true))
+            if(DragAndDrop.LoadOrImportCharaFile(path, chaFileControl))
             {
                 var hscene = GameObject.FindObjectOfType<FreeHScene>();
                 var member = hscene.member;

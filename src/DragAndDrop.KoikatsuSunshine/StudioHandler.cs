@@ -54,6 +54,7 @@ namespace DragAndDrop
 
         public override void Character_Load(string path, POINT pos, byte sex)
         {
+            // todo handle importing
             var characters = GetSelectedCharacters();
             if(characters.Count > 0)
             {
