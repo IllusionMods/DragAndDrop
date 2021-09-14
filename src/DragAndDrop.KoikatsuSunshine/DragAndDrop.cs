@@ -24,36 +24,36 @@ namespace DragAndDrop
                 return ext == ".png" || ext == ".dat";
             });
 
-            if(goodFiles.Count() == 0)
+            if (goodFiles.Count() == 0)
             {
                 Logger.LogMessage("No files to handle");
                 return;
             }
 
-            if(CardHandlerMethods.GetActiveCardHandler(out var cardHandler))
+            if (CardHandlerMethods.GetActiveCardHandler(out var cardHandler))
             {
-                foreach(var file in goodFiles)
+                foreach (var file in goodFiles)
                 {
                     var bytes = File.ReadAllBytes(file);
 
-                    if(BoyerMoore.ContainsSequence(bytes, StudioToken))
+                    if (BoyerMoore.ContainsSequence(bytes, StudioToken))
                     {
                         if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
                             cardHandler.Scene_Import(file, aPos);
                         else
                             cardHandler.Scene_Load(file, aPos);
                     }
-                    else if(BoyerMoore.ContainsSequence(bytes, CharaToken))
+                    else if (BoyerMoore.ContainsSequence(bytes, CharaToken))
                     {
                         var index = new BoyerMoore(SexToken).Search(bytes).First();
                         var sex = bytes[index + SexToken.Length];
                         cardHandler.Character_Load(file, aPos, sex);
                     }
-                    else if(BoyerMoore.ContainsSequence(bytes, CoordinateToken))
+                    else if (BoyerMoore.ContainsSequence(bytes, CoordinateToken))
                     {
                         cardHandler.Coordinate_Load(file, aPos);
                     }
-                    else if(BoyerMoore.ContainsSequence(bytes, PoseToken))
+                    else if (BoyerMoore.ContainsSequence(bytes, PoseToken))
                     {
                         cardHandler.PoseData_Load(file, aPos);
                     }
@@ -69,16 +69,10 @@ namespace DragAndDrop
             }
         }
 
-        public static bool LoadOrImportCharaFile(string path, ChaFileControl chaFileControl)
+        internal static void LogCardLoadError(ChaFileControl chaFileControl)
         {
-            if (chaFileControl.LoadCharaFile(path, 255, false, true)) return true;
-            if (chaFileControl.LoadCharaFileKoikatsu(path, 255, false, true))
-            {
-                Logger.LogMessage("Attempting to import a Koikatu card");
-                return true;
-            }
-
-            return false;
+            var lastErrorCode = chaFileControl.GetLastErrorCode();
+            Logger.LogMessage("Failed to load card with error code: " + (lastErrorCode != 0 ? lastErrorCode.ToString() : @"¯\_(ツ)_/¯"));
         }
     }
 }

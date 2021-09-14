@@ -1,7 +1,6 @@
 ﻿using ChaCustom;
 using Manager;
 using MessagePack;
-using System;
 using System.Linq;
 using UnityEngine;
 
@@ -20,7 +19,7 @@ namespace DragAndDrop
             var parameter = true;
             var loadCoord = true;
 
-            if(cfw)
+            if (cfw)
             {
                 loadFace = cfw.tglChaLoadFace && cfw.tglChaLoadFace.isOn;
                 loadBody = cfw.tglChaLoadBody && cfw.tglChaLoadBody.isOn;
@@ -32,20 +31,14 @@ namespace DragAndDrop
             var chaCtrl = CustomBase.Instance.chaCtrl;
             var originalSex = chaCtrl.sex;
 
-            if (loadFace && loadBody && loadHair && parameter && loadCoord)
+            if (!chaCtrl.chaFile.LoadOrImportFileLimited(path, chaCtrl.sex, loadFace, loadBody,
+                loadHair, parameter, loadCoord))
             {
-                DragAndDrop.LoadOrImportCharaFile(path, chaCtrl.chaFile);
-                if (chaCtrl.chaFile.GetLastErrorCode() != 0)
-                    throw new Exception("LoadOrImportCharaFile failed");
-            }
-            else
-            {
-                chaCtrl.chaFile.LoadFileLimited(path, chaCtrl.sex, loadFace, loadBody, loadHair, parameter, loadCoord);
-                if (chaCtrl.chaFile.GetLastErrorCode() != 0)
-                    throw new Exception("LoadFileLimited failed");
+                DragAndDrop.LogCardLoadError(chaCtrl.chaFile);
+                return;
             }
 
-            if(chaCtrl.chaFile.parameter.sex != originalSex)
+            if (chaCtrl.chaFile.parameter.sex != originalSex)
             {
                 chaCtrl.chaFile.parameter.sex = originalSex;
                 DragAndDrop.Logger.LogMessage("Warning: The character's sex has been changed to match the editor mode.");
@@ -62,7 +55,7 @@ namespace DragAndDrop
             var loadClothes = true;
             var loadAcs = true;
 
-            if(cfw)
+            if (cfw)
             {
                 loadClothes = cfw.tglCoordeLoadClothes && cfw.tglCoordeLoadClothes.isOn;
                 loadAcs = cfw.tglCoordeLoadAcs && cfw.tglCoordeLoadAcs.isOn;
@@ -73,9 +66,9 @@ namespace DragAndDrop
             var bytes2 = MessagePackSerializer.Serialize(chaCtrl.nowCoordinate.accessory);
             chaCtrl.nowCoordinate.LoadFile(path);
 
-            if(!loadClothes)
+            if (!loadClothes)
                 chaCtrl.nowCoordinate.clothes = MessagePackSerializer.Deserialize<ChaFileClothes>(bytes);
-            if(!loadAcs)
+            if (!loadAcs)
                 chaCtrl.nowCoordinate.accessory = MessagePackSerializer.Deserialize<ChaFileAccessory>(bytes2);
 
             chaCtrl.Reload(false, true, true, true);

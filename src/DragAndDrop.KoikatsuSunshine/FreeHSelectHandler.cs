@@ -76,7 +76,7 @@ namespace DragAndDrop
         private void SetupCharacter(string path, ResultType type)
         {
             var chaFileControl = new ChaFileControl();
-            if(DragAndDrop.LoadOrImportCharaFile(path, chaFileControl))
+            if(chaFileControl.LoadOrImportCharaFile(path))
             {
                 var hscene = GameObject.FindObjectOfType<FreeHScene>();
                 var member = hscene.member;
@@ -95,6 +95,10 @@ namespace DragAndDrop
                         member.resultPartner.Value = new SaveData.Heroine(chaFileControl, false);
                         break;
                 }
+            }
+            else
+            {
+                DragAndDrop.LogCardLoadError(chaFileControl);
             }
         }
 
