@@ -30,14 +30,16 @@ namespace DragAndDrop.EmotionCreators {
             if (CardHandlerMethods.GetActiveCardHandler(out var cardHandler)) {
                 foreach (var file in goodFiles) {
                     var bytes = File.ReadAllBytes(file);                    
-
-                    if (BoyerMoore.ContainsSequence(bytes, CharaToken)) {
-                        var index = new BoyerMoore(SexToken).Search(bytes).First();
-                        var sex = bytes[index + SexToken.Length];
+                    
+                    if (BoyerMoore.ContainsSequence(bytes, CharaToken, out var index)) {
+                        var sex = new BoyerMoore(SexToken).Search(bytes, index)
+                            .Select(i => bytes[i + SexToken.Length])
+                            .First(b => b == 0 || b == 1);
                         cardHandler.Character_Load(file, aPos, sex);
-                    } else if (BoyerMoore.ContainsSequence(bytes, KoiCharaToken)) {
-                        var index = new BoyerMoore(SexToken).Search(bytes).First();
-                        var sex = bytes[index + SexToken.Length];
+                    } else if (BoyerMoore.ContainsSequence(bytes, KoiCharaToken, out index)) {
+                        var sex = new BoyerMoore(SexToken).Search(bytes, index)
+                            .Select(i => bytes[i + SexToken.Length])
+                            .First(b => b == 0 || b == 1);
                         cardHandler.CharacterConvert_Load(file, aPos, sex);
                     } else if (BoyerMoore.ContainsSequence(bytes, CoordinateToken)) {
                         cardHandler.Coordinate_Load(file, aPos);

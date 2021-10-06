@@ -17,12 +17,12 @@ namespace DragAndDrop
             this.offsetTable = makeOffsetTable(needle);
         }
 
-        public IEnumerable<int> Search(byte[] haystack)
+        public IEnumerable<int> Search(byte[] haystack, int startIndex)
         {
-            if(needle.Length == 0)
+            if(needle.Length == 0 || startIndex + needle.Length > haystack.Length)
                 yield break;
 
-            for(int i = needle.Length - 1; i < haystack.Length;)
+            for(int i = startIndex + needle.Length - 1; i < haystack.Length;)
             {
                 int j;
 
@@ -42,7 +42,14 @@ namespace DragAndDrop
 
         public static bool ContainsSequence(byte[] haystack, byte[] needle)
         {
-            return new BoyerMoore(needle).Search(haystack).ToList().Count > 0;
+            return new BoyerMoore(needle).Search(haystack, 0).ToList().Count > 0;
+        }
+
+        public static bool ContainsSequence(byte[] haystack, byte[] needle, out int index)
+        {
+            var i = new BoyerMoore(needle).Search(haystack, 0)?.FirstOrDefault();
+            index = i ?? -1;
+            return i.HasValue;
         }
 
         static int[] makeByteTable(byte[] needle)

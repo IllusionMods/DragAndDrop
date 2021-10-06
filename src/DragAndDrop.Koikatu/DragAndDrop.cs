@@ -43,10 +43,11 @@ namespace DragAndDrop
                         else
                             cardHandler.Scene_Load(file, aPos);
                     }
-                    else if(BoyerMoore.ContainsSequence(bytes, CharaToken))
+                    else if(BoyerMoore.ContainsSequence(bytes, CharaToken, out var index)) 
                     {
-                        var index = new BoyerMoore(SexToken).Search(bytes).First();
-                        var sex = bytes[index + SexToken.Length];
+                        var sex = new BoyerMoore(SexToken).Search(bytes, index)
+                            .Select(i => bytes[i + SexToken.Length])
+                            .First(b => b == 0 || b == 1);
                         cardHandler.Character_Load(file, aPos, sex);
                     }
                     else if(BoyerMoore.ContainsSequence(bytes, CoordinateToken))
