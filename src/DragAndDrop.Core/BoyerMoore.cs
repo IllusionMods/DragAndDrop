@@ -47,9 +47,17 @@ namespace DragAndDrop
 
         public static bool ContainsSequence(byte[] haystack, byte[] needle, out int index)
         {
-            var i = new BoyerMoore(needle).Search(haystack, 0)?.FirstOrDefault();
-            index = i ?? -1;
-            return i.HasValue;
+            var l = new BoyerMoore(needle).Search(haystack, 0).ToList();
+            if (l.Count > 0)
+            {
+                index = l[0];
+                return true;
+            }
+            else
+            {
+                index = -1;
+                return false;
+            }
         }
 
         static int[] makeByteTable(byte[] needle)
