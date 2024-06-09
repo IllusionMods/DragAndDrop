@@ -1,4 +1,4 @@
-﻿using HarmonyLib;
+using HarmonyLib;
 using Manager;
 using Studio;
 using System;
@@ -55,9 +55,9 @@ namespace DragAndDrop
         public override void Character_Load(string path, POINT pos, byte sex)
         {
             var characters = GetSelectedCharacters();
-            if(characters.Count > 0)
+            if (characters.Count > 0)
             {
-                foreach(var chara in characters)
+                foreach (var chara in characters)
                 {
                     chara.charInfo.fileParam.sex = sex;
                     chara.ChangeChara(path);
@@ -65,22 +65,67 @@ namespace DragAndDrop
 
                 UpdateStateInfo();
             }
-            else if(sex == 1)
+            else if (sex == 1)
             {
                 Studio.Studio.Instance.AddFemale(path);
             }
-            else if(sex == 0)
+            else if (sex == 0)
             {
                 Studio.Studio.Instance.AddMale(path);
+            }
+        }
+
+        public override void Character_LoadMultiple(List<string> paths, POINT pos, byte sex)
+        {
+            var characters = GetSelectedCharacters();
+            if (characters.Count > 0 && paths.Count > 0)
+            {
+                if (paths.Count == 1)
+                {
+                    // If only one file is selected, apply it to all selected slots
+                    var singlePath = paths[0];
+                    foreach (var chara in characters)
+                    {
+                        chara.charInfo.fileParam.sex = sex;
+                        chara.ChangeChara(singlePath);
+                    }
+                }
+                else
+                {
+                    // Apply each file to the respective slot
+                    int minCount = Mathf.Min(characters.Count, paths.Count);
+                    for (int i = 0; i < minCount; i++)
+                    {
+                        var chara = characters[i];
+                        chara.charInfo.fileParam.sex = sex;
+                        chara.ChangeChara(paths[i]);
+                    }
+                }
+
+                UpdateStateInfo();
+            }
+            else
+            {
+                foreach (var path in paths)
+                {
+                    if (sex == 1)
+                    {
+                        Studio.Studio.Instance.AddFemale(path);
+                    }
+                    else if (sex == 0)
+                    {
+                        Studio.Studio.Instance.AddMale(path);
+                    }
+                }
             }
         }
 
         public override void Coordinate_Load(string path, POINT pos)
         {
             var characters = GetSelectedCharacters();
-            if(characters.Count > 0)
+            if (characters.Count > 0)
             {
-                foreach(var chara in characters)
+                foreach (var chara in characters)
                     chara.LoadClothesFile(path);
 
                 UpdateStateInfo();
@@ -92,13 +137,13 @@ namespace DragAndDrop
             try
             {
                 var characters = GetSelectedCharacters();
-                if(characters.Count > 0)
+                if (characters.Count > 0)
                 {
-                    foreach(var chara in characters)
+                    foreach (var chara in characters)
                         PauseCtrl.Load(chara, path);
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 DragAndDrop.Logger.Log(LogLevel.Error, ex);
             }
@@ -112,10 +157,10 @@ namespace DragAndDrop
         private void UpdateStateInfo()
         {
             var mpCharCtrl = GameObject.FindObjectOfType<MPCharCtrl>();
-            if(mpCharCtrl)
+            if (mpCharCtrl)
             {
                 int select = mpCharCtrl.select;
-                if(select == 0) mpCharCtrl.OnClickRoot(0);
+                if (select == 0) mpCharCtrl.OnClickRoot(0);
             }
         }
     }
