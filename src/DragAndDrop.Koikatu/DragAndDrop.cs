@@ -1,4 +1,4 @@
-﻿using BepInEx;
+using BepInEx;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -22,45 +22,63 @@ namespace DragAndDrop
             {
                 var ext = Path.GetExtension(x).ToLower();
                 return ext == ".png" || ext == ".dat";
-            });
+            }).ToList();
 
-            if(goodFiles.Count() == 0)
+            if (goodFiles.Count() == 0)
             {
                 Logger.LogMessage("No files to handle");
                 return;
             }
 
-            if(CardHandlerMethods.GetActiveCardHandler(out var cardHandler))
+            if (CardHandlerMethods.GetActiveCardHandler(out var cardHandler))
             {
-                foreach(var file in goodFiles)
+                List<string> characterFiles = new List<string>();
+
+                foreach (var file in goodFiles)
                 {
                     var bytes = File.ReadAllBytes(file);
 
-                    if(BoyerMoore.ContainsSequence(bytes, StudioToken))
+                    if (BoyerMoore.ContainsSequence(bytes, StudioToken))
                     {
                         if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
                             cardHandler.Scene_Import(file, aPos);
                         else
                             cardHandler.Scene_Load(file, aPos);
                     }
-                    else if(BoyerMoore.ContainsSequence(bytes, CharaToken, out var index)) 
+                    else if (BoyerMoore.ContainsSequence(bytes, CharaToken, out var index))
                     {
-                        var sex = new BoyerMoore(SexToken).Search(bytes, index)
-                            .Select(i => bytes[i + SexToken.Length])
-                            .First(b => b == 0 || b == 1);
-                        cardHandler.Character_Load(file, aPos, sex);
+                        characterFiles.Add(file);
                     }
-                    else if(BoyerMoore.ContainsSequence(bytes, CoordinateToken))
+                    else if (BoyerMoore.ContainsSequence(bytes, CoordinateToken))
                     {
                         cardHandler.Coordinate_Load(file, aPos);
                     }
-                    else if(BoyerMoore.ContainsSequence(bytes, PoseToken))
+                    else if (BoyerMoore.ContainsSequence(bytes, PoseToken))
                     {
                         cardHandler.PoseData_Load(file, aPos);
                     }
                     else
                     {
                         Logger.LogMessage("This file does not contain any Koikatu related data");
+                    }
+                }
+
+                if (characterFiles.Count > 0)
+                {
+                    var bytes = File.ReadAllBytes(characterFiles[0]);
+                    var sex = new BoyerMoore(SexToken).Search(bytes, 0)
+                        .Select(i => bytes[i + SexToken.Length])
+                        .First(b => b == 0 || b == 1);
+                    if (cardHandler is StudioHandler)
+                    {
+                        ((StudioHandler)cardHandler).Character_LoadMultiple(characterFiles, aPos, sex);
+                    }
+                    else
+                    {
+                        foreach (var file in characterFiles)
+                        {
+                            cardHandler.Character_Load(file, aPos, sex);
+                        }
                     }
                 }
             }
