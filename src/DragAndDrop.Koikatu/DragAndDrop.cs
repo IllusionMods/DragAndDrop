@@ -33,6 +33,7 @@ namespace DragAndDrop
             if (CardHandlerMethods.GetActiveCardHandler(out var cardHandler))
             {
                 List<string> characterFiles = new List<string>();
+                List<string> coordinateFiles = new List<string>();
 
                 foreach (var file in goodFiles)
                 {
@@ -51,7 +52,7 @@ namespace DragAndDrop
                     }
                     else if (BoyerMoore.ContainsSequence(bytes, CoordinateToken))
                     {
-                        cardHandler.Coordinate_Load(file, aPos);
+                        coordinateFiles.Add(file);
                     }
                     else if (BoyerMoore.ContainsSequence(bytes, PoseToken))
                     {
@@ -71,13 +72,28 @@ namespace DragAndDrop
                         .First(b => b == 0 || b == 1);
                     if (cardHandler is StudioHandler)
                     {
-                        ((StudioHandler)cardHandler).Character_LoadMultiple(characterFiles, aPos, sex);
+                        ((StudioHandler)cardHandler).Character_Load(characterFiles, aPos, sex);
                     }
                     else
                     {
                         foreach (var file in characterFiles)
                         {
                             cardHandler.Character_Load(file, aPos, sex);
+                        }
+                    }
+                }
+
+                if (coordinateFiles.Count > 0)
+                {
+                    if (cardHandler is StudioHandler)
+                    {
+                        ((StudioHandler)cardHandler).Coordinate_Load(coordinateFiles, aPos);
+                    }
+                    else
+                    {
+                        foreach (var file in coordinateFiles)
+                        {
+                            cardHandler.Coordinate_Load(file, aPos);
                         }
                     }
                 }
