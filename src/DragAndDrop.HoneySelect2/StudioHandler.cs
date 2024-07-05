@@ -1,120 +1,110 @@
-using HarmonyLib;
-using Manager;
-using Studio;
-using System;
+using BepInEx;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
 using UnityEngine;
 
 namespace DragAndDrop
 {
-    internal class StudioHandler : CardHandlerMethods
+    [BepInPlugin(GUID, PluginName, Version)]
+    public class DragAndDrop : DragAndDropCore
     {
-        public override bool Condition => Scene.initialized && Scene.NowSceneNames.Any(x => x == "Studio");
+        private static readonly byte[] CharaToken = Encoding.UTF8.GetBytes("【AIS_Chara】");
+        private static readonly byte[] SexToken = Encoding.UTF8.GetBytes("sex");
+        private static readonly byte[] StudioOldToken = Encoding.UTF8.GetBytes("KStudio"); // Compatibility with older scenes created before the 11-08 update
+        private static readonly byte[] StudioNewToken = Encoding.UTF8.GetBytes("StudioNEOV2");
+        private static readonly byte[] CoordinateToken = Encoding.UTF8.GetBytes("AIS_Clothes");
+        private static readonly byte[] PoseToken = Encoding.UTF8.GetBytes("【pose】");
 
-        public override void Scene_Load(string path, POINT pos)
+        internal override void OnFiles(List<string> aFiles, POINT aPos)
         {
-            var studio = Studio.Studio.Instance;
-
-            studio.colorPalette.visible = false;
-
-            var empty = Scene.commonSpace.transform.childCount == 0;
-            if (empty || !DragAndDropCore.ShowSceneOverwriteWarnings.Value)
+            var goodFiles = aFiles.Where(x =>
             {
-                studio.StartCoroutine(studio.LoadSceneCoroutine(path));
+                var ext = Path.GetExtension(x).ToLower();
+                return ext == ".png";
+            }).ToList();
+
+            if (goodFiles.Count() == 0)
+            {
+                Logger.LogMessage("No files to handle");
+                return;
+            }
+
+            if (CardHandlerMethods.GetActiveCardHandler(out var cardHandler))
+            {
+                List<string> characterFiles = new List<string>();
+                List<string> coordinateFiles = new List<string>();
+
+                foreach (var file in goodFiles)
+                {
+                    var bytes = File.ReadAllBytes(file);
+
+                    if (BoyerMoore.ContainsSequence(bytes, StudioNewToken) || BoyerMoore.ContainsSequence(bytes, StudioOldToken))
+                    {
+                        if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
+                            cardHandler.Scene_Import(file, aPos);
+                        else
+                            cardHandler.Scene_Load(file, aPos);
+                    }
+                    else if (BoyerMoore.ContainsSequence(bytes, CharaToken, out var index))
+                    {
+                        var sex = new BoyerMoore(SexToken).Search(bytes, index)
+                            .Select(i => bytes[i + SexToken.Length])
+                            .First(b => b == 0 || b == 1);
+                        characterFiles.Add(file);
+                    }
+                    else if (BoyerMoore.ContainsSequence(bytes, CoordinateToken))
+                    {
+                        coordinateFiles.Add(file);
+                    }
+                    else if (BoyerMoore.ContainsSequence(bytes, PoseToken))
+                    {
+                        cardHandler.PoseData_Load(file, aPos);
+                    }
+                    else
+                    {
+                        Logger.LogMessage("This file does not contain any HS2 related data");
+                    }
+                }
+
+                if (characterFiles.Count > 0)
+                {
+                    var bytes = File.ReadAllBytes(characterFiles[0]);
+                    var sex = new BoyerMoore(SexToken).Search(bytes, 0)
+                        .Select(i => bytes[i + SexToken.Length])
+                        .First(b => b == 0 || b == 1);
+                    if (cardHandler is StudioHandler)
+                    {
+                        ((StudioHandler)cardHandler).Character_Load(characterFiles, aPos, sex);
+                    }
+                    else
+                    {
+                        foreach (var file in characterFiles)
+                        {
+                            cardHandler.Character_Load(file, aPos, sex);
+                        }
+                    }
+                }
+
+                if (coordinateFiles.Count > 0)
+                {
+                    if (cardHandler is StudioHandler)
+                    {
+                        ((StudioHandler)cardHandler).Coordinate_Load(coordinateFiles, aPos);
+                    }
+                    else
+                    {
+                        foreach (var file in coordinateFiles)
+                        {
+                            cardHandler.Coordinate_Load(file, aPos);
+                        }
+                    }
+                }
             }
             else
             {
-                Studio.CheckScene.unityActionYes = () =>
-                {
-                    Manager.Scene.Unload();
-                    // Wait for a frame for the dialog to unload before loading the scene (not necessary?)
-                    studio.StartCoroutine(new[] { null, studio.LoadSceneCoroutine(path) }.GetEnumerator());
-                };
-                Studio.CheckScene.unityActionNo = () =>
-                {
-                    Manager.Scene.Unload();
-                };
-                // Need to use the scene reset sprite because the scene load sprite isn't loaded unless the scene load window is opened
-                Studio.CheckScene.sprite = studio.systemButtonCtrl.spriteInit;
-
-                Scene.LoadReserve(new Scene.Data
-                {
-                    levelName = "StudioCheck",
-                    isAdd = true
-                }, false);
-            }
-        }
-
-        public override void Scene_Import(string path, POINT pos)
-        {
-            Studio.Studio.Instance.ImportScene(path);
-        }
-
-        public override void Character_Load(string path, POINT pos, byte sex)
-        {
-            var characters = GetSelectedCharacters();
-            if(characters.Count > 0)
-            {
-                foreach(var chara in characters)
-                {
-                    chara.charInfo.fileParam.sex = sex;
-                    chara.ChangeChara(path);
-                }
-
-                UpdateStateInfo();
-            }
-            else if(sex == 1)
-            {
-                Studio.Studio.Instance.AddFemale(path);
-            }
-            else if(sex == 0)
-            {
-                Studio.Studio.Instance.AddMale(path);
-            }
-        }
-
-        public override void Coordinate_Load(string path, POINT pos)
-        {
-            var characters = GetSelectedCharacters();
-            if(characters.Count > 0)
-            {
-                foreach(var chara in characters)
-                    chara.LoadClothesFile(path);
-
-                UpdateStateInfo();
-            }
-        }
-
-        public override void PoseData_Load(string path, POINT pos)
-        {
-            try
-            {
-                var characters = GetSelectedCharacters();
-                if(characters.Count > 0)
-                {
-                    foreach(var chara in characters)
-                        PauseCtrl.Load(chara, path);
-                }
-            }
-            catch(Exception ex)
-            {
-                DragAndDrop.Logger.Log(BepInEx.Logging.LogLevel.Error, ex);
-            }
-        }
-
-        private List<OCIChar> GetSelectedCharacters()
-        {
-            return GuideObjectManager.Instance.selectObjectKey.Select(x => Studio.Studio.GetCtrlInfo(x) as OCIChar).Where(x => x != null).ToList();
-        }
-
-        private void UpdateStateInfo()
-        {
-            var mpCharCtrl = GameObject.FindObjectOfType<MPCharCtrl>();
-            if(mpCharCtrl)
-            {
-                int select = mpCharCtrl.select;
-                if(select == 0) mpCharCtrl.OnClickRoot(0);
+                Logger.LogMessage("No handler found for this scene");
             }
         }
     }
