@@ -1,4 +1,4 @@
-﻿using HarmonyLib;
+using HarmonyLib;
 using Manager;
 using Studio;
 using System;
@@ -54,35 +54,83 @@ namespace DragAndDrop
 
         public override void Character_Load(string path, POINT pos, byte sex)
         {
-            // todo handle importing
+            Character_Load(new List<string> { path }, pos, sex);
+        }
+
+        public void Character_Load(List<string> paths, POINT pos, byte sex)
+        {
             var characters = GetSelectedCharacters();
-            if(characters.Count > 0)
+            if (characters.Count > 0 && paths.Count > 0)
             {
-                foreach(var chara in characters)
+                if (paths.Count == 1)
                 {
-                    chara.charInfo.fileParam.sex = sex;
-                    chara.ChangeChara(path);
+                    // If only one file is selected, apply it to all selected slots
+                    var singlePath = paths[0];
+                    foreach (var chara in characters)
+                    {
+                        chara.charInfo.fileParam.sex = sex;
+                        chara.ChangeChara(singlePath);
+                    }
+                }
+                else
+                {
+                    // Apply each file to the respective slot
+                    int minCount = Mathf.Min(characters.Count, paths.Count);
+                    for (int i = 0; i < minCount; i++)
+                    {
+                        var chara = characters[i];
+                        chara.charInfo.fileParam.sex = sex;
+                        chara.ChangeChara(paths[i]);
+                    }
                 }
 
                 UpdateStateInfo();
             }
-            else if(sex == 1)
+            else
             {
-                Studio.Studio.Instance.AddFemale(path);
-            }
-            else if(sex == 0)
-            {
-                Studio.Studio.Instance.AddMale(path);
+                foreach (var path in paths)
+                {
+                    if (sex == 1)
+                    {
+                        Studio.Studio.Instance.AddFemale(path);
+                    }
+                    else if (sex == 0)
+                    {
+                        Studio.Studio.Instance.AddMale(path);
+                    }
+                }
             }
         }
 
         public override void Coordinate_Load(string path, POINT pos)
         {
+            Coordinate_Load(new List<string> { path }, pos);
+        }
+
+        public void Coordinate_Load(List<string> paths, POINT pos)
+        {
             var characters = GetSelectedCharacters();
-            if(characters.Count > 0)
+            if (characters.Count > 0 && paths.Count > 0)
             {
-                foreach(var chara in characters)
-                    chara.LoadClothesFile(path);
+                if (paths.Count == 1)
+                {
+                    // If only one file is selected, apply it to all selected slots
+                    var singlePath = paths[0];
+                    foreach (var chara in characters)
+                    {
+                        chara.LoadClothesFile(singlePath);
+                    }
+                }
+                else
+                {
+                    // Apply each file to the respective slot
+                    int minCount = Mathf.Min(characters.Count, paths.Count);
+                    for (int i = 0; i < minCount; i++)
+                    {
+                        var chara = characters[i];
+                        chara.LoadClothesFile(paths[i]);
+                    }
+                }
 
                 UpdateStateInfo();
             }
@@ -93,13 +141,13 @@ namespace DragAndDrop
             try
             {
                 var characters = GetSelectedCharacters();
-                if(characters.Count > 0)
+                if (characters.Count > 0)
                 {
-                    foreach(var chara in characters)
+                    foreach (var chara in characters)
                         PauseCtrl.Load(chara, path);
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 DragAndDrop.Logger.Log(LogLevel.Error, ex);
             }
@@ -113,10 +161,10 @@ namespace DragAndDrop
         private void UpdateStateInfo()
         {
             var mpCharCtrl = GameObject.FindObjectOfType<MPCharCtrl>();
-            if(mpCharCtrl)
+            if (mpCharCtrl)
             {
                 int select = mpCharCtrl.select;
-                if(select == 0) mpCharCtrl.OnClickRoot(0);
+                if (select == 0) mpCharCtrl.OnClickRoot(0);
             }
         }
     }
