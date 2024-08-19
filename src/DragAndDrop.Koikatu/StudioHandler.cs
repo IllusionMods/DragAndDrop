@@ -69,6 +69,7 @@ namespace DragAndDrop
                     foreach (var chara in characters)
                     {
                         chara.charInfo.fileParam.sex = sex;
+                        chara.oiCharInfo.sex = sex;
                         chara.ChangeChara(singlePath);
                     }
                 }
@@ -80,6 +81,7 @@ namespace DragAndDrop
                     {
                         var chara = characters[i];
                         chara.charInfo.fileParam.sex = sex;
+                        chara.oiCharInfo.sex = sex;
                         chara.ChangeChara(paths[i]);
                     }
                 }
